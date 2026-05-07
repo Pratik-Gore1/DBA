@@ -1,0 +1,360 @@
+.. code:: ipython3
+
+    import nltk
+    import re
+    import math
+    import pandas as pd
+    
+    from nltk.tokenize import word_tokenize
+    from nltk.corpus import stopwords
+    from nltk.stem import PorterStemmer, WordNetLemmatizer
+    from nltk import pos_tag
+
+.. code:: ipython3
+
+    nltk.download('punkt')
+    nltk.download('stopwords')
+    nltk.download('wordnet')
+    nltk.download('omw-1.4')
+    nltk.download('averaged_perceptron_tagger')
+
+
+.. parsed-literal::
+
+    [nltk_data] Downloading package punkt to C:\Users\prati/nltk_data...
+    [nltk_data]   Package punkt is already up-to-date!
+    [nltk_data] Downloading package stopwords to
+    [nltk_data]     C:\Users\prati/nltk_data...
+    [nltk_data]   Package stopwords is already up-to-date!
+    [nltk_data] Downloading package wordnet to C:\Users\prati/nltk_data...
+    [nltk_data]   Package wordnet is already up-to-date!
+    [nltk_data] Downloading package omw-1.4 to C:\Users\prati/nltk_data...
+    [nltk_data]   Package omw-1.4 is already up-to-date!
+    [nltk_data] Downloading package averaged_perceptron_tagger to
+    [nltk_data]     C:\Users\prati/nltk_data...
+    [nltk_data]   Package averaged_perceptron_tagger is already up-to-
+    [nltk_data]       date!
+    
+
+
+
+.. parsed-literal::
+
+    True
+
+
+
+.. code:: ipython3
+
+    text = """Computer Society of India helps students improve technical skills.
+    Students learn programming, projects, and teamwork together."""
+    
+    print("Original Text:\n")
+    print(text)
+
+
+.. parsed-literal::
+
+    Original Text:
+    
+    Computer Society of India helps students improve technical skills.
+    Students learn programming, projects, and teamwork together.
+    
+
+.. code:: ipython3
+
+    # Tokenization
+    
+    tokens = word_tokenize(text)
+    
+    print("Tokens:\n")
+    print(tokens)
+
+
+.. parsed-literal::
+
+    Tokens:
+    
+    ['Computer', 'Society', 'of', 'India', 'helps', 'students', 'improve', 'technical', 'skills', '.', 'Students', 'learn', 'programming', ',', 'projects', ',', 'and', 'teamwork', 'together', '.']
+    
+
+.. code:: ipython3
+
+    # Text Cleaning
+    
+    clean_tokens = []
+    
+    for word in tokens:
+        
+        word = re.sub(r'[^a-zA-Z]', '', word)
+        
+        if word != "":
+            clean_tokens.append(word.lower())
+    
+    print("Clean Tokens:\n")
+    print(clean_tokens)
+
+
+.. parsed-literal::
+
+    Clean Tokens:
+    
+    ['computer', 'society', 'of', 'india', 'helps', 'students', 'improve', 'technical', 'skills', 'students', 'learn', 'programming', 'projects', 'and', 'teamwork', 'together']
+    
+
+.. code:: ipython3
+
+    # Stop Words Removal
+    
+    stop_words = set(stopwords.words('english'))
+    
+    filtered_tokens = [word for word in clean_tokens if word not in stop_words]
+    
+    print("After Stop Word Removal:\n")
+    print(filtered_tokens)
+
+
+.. parsed-literal::
+
+    After Stop Word Removal:
+    
+    ['computer', 'society', 'india', 'helps', 'students', 'improve', 'technical', 'skills', 'students', 'learn', 'programming', 'projects', 'teamwork', 'together']
+    
+
+.. code:: ipython3
+
+    # POS Tagging
+    
+    pos_tags = pos_tag(filtered_tokens)
+    
+    print("POS Tags:\n")
+    print(pos_tags)
+
+
+.. parsed-literal::
+
+    POS Tags:
+    
+    [('computer', 'NN'), ('society', 'NN'), ('india', 'NN'), ('helps', 'VBZ'), ('students', 'NNS'), ('improve', 'VB'), ('technical', 'JJ'), ('skills', 'NNS'), ('students', 'NNS'), ('learn', 'VBP'), ('programming', 'VBG'), ('projects', 'NNS'), ('teamwork', 'VBP'), ('together', 'RB')]
+    
+
+.. code:: ipython3
+
+    # Stemming
+    
+    stemmer = PorterStemmer()
+    
+    stemmed_words = [stemmer.stem(word) for word in filtered_tokens]
+    
+    print("Stemmed Words:\n")
+    print(stemmed_words)
+
+
+.. parsed-literal::
+
+    Stemmed Words:
+    
+    ['comput', 'societi', 'india', 'help', 'student', 'improv', 'technic', 'skill', 'student', 'learn', 'program', 'project', 'teamwork', 'togeth']
+    
+
+.. code:: ipython3
+
+    # Lemmatization
+    
+    lemmatizer = WordNetLemmatizer()
+    
+    lemmatized_words = [lemmatizer.lemmatize(word) for word in filtered_tokens]
+    
+    print("Lemmatized Words:\n")
+    print(lemmatized_words)
+
+
+.. parsed-literal::
+
+    Lemmatized Words:
+    
+    ['computer', 'society', 'india', 'help', 'student', 'improve', 'technical', 'skill', 'student', 'learn', 'programming', 'project', 'teamwork', 'together']
+    
+
+.. code:: ipython3
+
+    # Two Documents for TF-IDF
+    
+    doc1 = "cat likes milk and cat likes fish"
+    doc2 = "dog likes milk and dog likes bones"
+    
+    print("Document 1:\n", doc1)
+    print("\nDocument 2:\n", doc2)
+
+
+.. parsed-literal::
+
+    Document 1:
+     cat likes milk and cat likes fish
+    
+    Document 2:
+     dog likes milk and dog likes bones
+    
+
+.. code:: ipython3
+
+    # Preprocess Documents
+    
+    def preprocess(text):
+        text = text.lower()
+        text = re.sub(r'[^a-zA-Z\s]', '', text)
+        words = text.split()
+        return words
+    
+    doc1_words = preprocess(doc1)
+    doc2_words = preprocess(doc2)
+    
+    print(doc1_words)
+    print(doc2_words)
+
+
+.. parsed-literal::
+
+    ['cat', 'likes', 'milk', 'and', 'cat', 'likes', 'fish']
+    ['dog', 'likes', 'milk', 'and', 'dog', 'likes', 'bones']
+    
+
+.. code:: ipython3
+
+    # Create Vocabulary
+    
+    vocab = set(doc1_words).union(set(doc2_words))
+    
+    print("Vocabulary:\n")
+    print(vocab)
+
+
+.. parsed-literal::
+
+    Vocabulary:
+    
+    {'bones', 'cat', 'milk', 'likes', 'and', 'dog', 'fish'}
+    
+
+.. code:: ipython3
+
+    # Word Count
+    
+    wordDictA = dict.fromkeys(vocab, 0)
+    wordDictB = dict.fromkeys(vocab, 0)
+    
+    for word in doc1_words:
+        wordDictA[word] += 1
+    
+    for word in doc2_words:
+        wordDictB[word] += 1
+    
+    print(pd.DataFrame([wordDictA, wordDictB]))
+
+
+.. parsed-literal::
+
+       bones  cat  milk  likes  and  dog  fish
+    0      0    2     1      2    1    0     1
+    1      1    0     1      2    1    2     0
+    
+
+.. code:: ipython3
+
+    # Calculate Term Frequency (TF)
+    
+    def computeTF(wordDict, doc):
+        
+        tfDict = {}
+        total_words = len(doc)
+        
+        for word, count in wordDict.items():
+            tfDict[word] = count / total_words
+            
+        return tfDict
+    
+    tfA = computeTF(wordDictA, doc1_words)
+    tfB = computeTF(wordDictB, doc2_words)
+    
+    tf = pd.DataFrame([tfA, tfB])
+    
+    print("Term Frequency:\n")
+    print(tf)
+
+
+.. parsed-literal::
+
+    Term Frequency:
+    
+          bones       cat      milk     likes       and       dog      fish
+    0  0.000000  0.285714  0.142857  0.285714  0.142857  0.000000  0.142857
+    1  0.142857  0.000000  0.142857  0.285714  0.142857  0.285714  0.000000
+    
+
+.. code:: ipython3
+
+    # Calculate Inverse Document Frequency (IDF)
+    
+    def computeIDF(docList):
+        
+        N = len(docList)
+        
+        idfDict = dict.fromkeys(docList[0].keys(), 0)
+        
+        for word in idfDict:
+            
+            count = 0
+            
+            for doc in docList:
+                if doc[word] > 0:
+                    count += 1
+                    
+            idfDict[word] = math.log10((N + 1) / (count + 1)) + 1
+            
+        return idfDict
+    
+    idfs = computeIDF([wordDictA, wordDictB])
+    
+    print("IDF Values:\n")
+    print(idfs)
+
+
+.. parsed-literal::
+
+    IDF Values:
+    
+    {'bones': 1.1760912590556813, 'cat': 1.1760912590556813, 'milk': 1.0, 'likes': 1.0, 'and': 1.0, 'dog': 1.1760912590556813, 'fish': 1.1760912590556813}
+    
+
+.. code:: ipython3
+
+    # Calculate TF-IDF
+    
+    def computeTFIDF(tfDict, idfs):
+        
+        tfidf = {}
+        
+        for word, value in tfDict.items():
+            tfidf[word] = value * idfs[word]
+            
+        return tfidf
+    
+    tfidfA = computeTFIDF(tfA, idfs)
+    tfidfB = computeTFIDF(tfB, idfs)
+    
+    tfidf = pd.DataFrame([tfidfA, tfidfB])
+    
+    print("TF-IDF Representation:\n")
+    print(tfidf)
+
+
+.. parsed-literal::
+
+    TF-IDF Representation:
+    
+          bones       cat      milk     likes       and       dog      fish
+    0  0.000000  0.336026  0.142857  0.285714  0.142857  0.000000  0.168013
+    1  0.168013  0.000000  0.142857  0.285714  0.142857  0.336026  0.000000
+    
+
+
